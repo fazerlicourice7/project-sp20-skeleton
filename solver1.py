@@ -29,12 +29,8 @@ def MRCT(G):
     Returns:
         T: networkx.Graph - a Minimum Routing Cost Tree for G
     """
-    L, NodeLevel, l_max = network_reduction(G)
-    print(L)
-    print()
-    print(NodeLevel)
-    print()
-    print(l_max)
+    L, NodeLevel, l_max, n = network_reduction(G)
+    T = build_tree(G, L, NodeLevel, l_max, n)
     
 
 def network_reduction(G):
@@ -46,6 +42,8 @@ def network_reduction(G):
         L: dictionary mapping levels to a list of the nodes in them
         NodeLevel: dictionary mapping nodes in G to their level
         l_max: the level of the core node(s)
+        n: dictionary mapping edges to the number of pairs (u, v) for which the edge is used
+        in the shortest path between u and v in some shortest path tree T, summed over all T
     """
     V = list(G.nodes)
     n = {}
@@ -78,7 +76,7 @@ def network_reduction(G):
         for k in L[l]:
             NodeLevel[k] = l
     l_max = l
-    return (L, NodeLevel, l_max)
+    return (L, NodeLevel, l_max, n)
 
 def get_n_ij(edges, T):
     """
@@ -111,6 +109,53 @@ def get_n_ij(edges, T):
         n[(key[1], key[0])] = n[key]
     return n
 
+def build_tree(G, L, NodeLevel, l_max, n):
+    """
+    Args:
+        G: networkx.Graph
+        L: dictionary mapping levels to a list of the nodes in them
+        NodeLevel: dictionary mapping nodes in G to their level
+        l_max: the level of the core node(s)
+        n: n: dictionary mapping edges to the number of pairs (u, v) for which the edge is used
+        in the shortest path between u and v in some shortest path tree T, summed over all T
+
+    Returns:
+        MRCT: networkx.Graph - spanning tree of G created by greedily adding edges with maximal n
+        values to the core node
+    """
+    T = set()
+    E = set()
+    l_1 = l_max
+    S = [k for k in G.nodes if NodeLevel[k] == l_max]
+    while T != set(G.nodes):
+        max_val = 0
+        l_2 = l_1
+        CurrentNode = 0
+        while CurrentNode == 0:
+            for k in L[l_1]:
+                if k in T:
+                    pass
+                else:
+                    CurrentNode = 0
+                    if len(T) == 0:
+                        T.add(k)
+                    else:
+                        for j in T:
+                            if n[(j, k)] > 0:
+                                if max_val < n[(j, k)]:
+                                    CurrentNode = k
+                                    edge_to_add = (j, k)
+                                    max_val = n[(j, k)]
+                        if CurrentNode != 0:
+                            break
+            l_2 -= 1
+        T.add(CurrentNode)
+        E.add(edge_to_add)
+        if all([k in S for k in L[l1]]):
+            l_1 -= 1
+    MRCT = nx.Graph()
+    MRCT.add_edges_from(list(E))
+    return MRCT
 
 # Here's an example of how to run your solver.
 
