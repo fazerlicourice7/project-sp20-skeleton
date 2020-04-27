@@ -16,8 +16,11 @@ def solve(G):
 
     # TODO: your code here!
     subsets = preprocess(G)
-    tree = greedy_dominating_tree(G, subsets)
-    DT = postprocess(G, tree)
+    try:
+        tree = greedy_dominating_tree(G, subsets)
+        DT = postprocess(G, tree)
+    except:
+        DT = nx.Graph()
     return DT
 
 
