@@ -20,7 +20,7 @@ def solve(G):
         tree = greedy_dominating_tree(G, subsets)
         DT = postprocess(G, tree)
     except:
-        DT = nx.Graph()
+        DT = nx.minimum_spanning_tree(G)
     return DT
 
 
