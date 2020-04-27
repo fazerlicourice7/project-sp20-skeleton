@@ -13,8 +13,6 @@ def solve(G):
     Returns:
         T: networkx.Graph
     """
-
-    # TODO: your code here!
     T = MRCT(G)
     leaves = [node for node in list(T.nodes) if T.degree[node] == 1]
     for node in leaves:
@@ -31,6 +29,7 @@ def MRCT(G):
     """
     L, NodeLevel, l_max, n = network_reduction(G)
     T = build_tree(G, L, NodeLevel, l_max, n)
+    return T
     
 
 def network_reduction(G):
@@ -49,7 +48,7 @@ def network_reduction(G):
     n = {}
     n_ij = {}
     for k in V:
-        T_k = nx.single_source_dijkstra_path(G, k)
+        lengths, T_k = nx.single_source_dijkstra(G, k, weight='weight')
         edges = set()
         for path in T_k.values():
             [edges.add(tuple(sorted([path[i - 1], path[i]]))) for i in range(1, len(path))]
@@ -125,37 +124,31 @@ def build_tree(G, L, NodeLevel, l_max, n):
     """
     T = set()
     E = set()
-    l_1 = l_max
-    S = [k for k in G.nodes if NodeLevel[k] == l_max]
-    while T != set(G.nodes):
-        max_val = 0
-        l_2 = l_1
-        CurrentNode = 0
-        while CurrentNode == 0:
-            for k in L[l_1]:
-                if k in T:
-                    pass
-                else:
-                    CurrentNode = 0
-                    if len(T) == 0:
-                        T.add(k)
-                    else:
-                        for j in T:
-                            if n[(j, k)] > 0:
-                                if max_val < n[(j, k)]:
-                                    CurrentNode = k
-                                    edge_to_add = (j, k)
-                                    max_val = n[(j, k)]
-                        if CurrentNode != 0:
-                            break
-            l_2 -= 1
-        T.add(CurrentNode)
-        E.add(edge_to_add)
-        if all([k in S for k in L[l1]]):
-            l_1 -= 1
+    deg = {}
+    for k in G.nodes:
+        deg[k] = sum([n.get((k, j), 0) for j in G.nodes])
+    core = [k for k in G if NodeLevel[k] == l_max]
+    if len(core) == 1:
+        T.add(core[0])
+    else:
+        T.add(max(core, key = lambda x : deg[x]))
+    l = l_max
+    for l in range(l_max, 0, -1):
+        for k in L[l]:
+            if k in T:
+                pass
+            else:
+                i = max(T, key = lambda x : weight_heuristic(x, k, n))
+                T.add(k)
+                E.add((i, k, G[i][k]['weight']))
     MRCT = nx.Graph()
-    MRCT.add_edges_from(list(E))
+    MRCT.add_weighted_edges_from(list(E))
     return MRCT
+
+def weight_heuristic(u, v, n):
+    if (u, v) not in G.edges:
+        return 0
+    return n[(u, v)] / G[u][v]['weight']
 
 # Here's an example of how to run your solver.
 
