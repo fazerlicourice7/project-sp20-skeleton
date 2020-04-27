@@ -14,9 +14,6 @@ def solve(G):
         T: networkx.Graph
     """
     T = MRCT(G)
-    leaves = [node for node in list(T.nodes) if T.degree[node] == 1]
-    for node in leaves:
-        T.remove_node(node)
     return T
 
 def MRCT(G):
@@ -59,6 +56,9 @@ def network_reduction(G):
     E = G.edges()
     for e in E: 
         n[e] = sum([n_ij[k][e] for k in V if e in n_ij[k].keys()])
+    keys = list(n.keys())
+    for key in keys:
+        n[(key[1], key[0])] = n[key]
     V_new = V
     L = {}
     NodeLevel = {}
@@ -125,6 +125,7 @@ def build_tree(G, L, NodeLevel, l_max, n):
     T = set()
     E = set()
     deg = {}
+    flag = 0
     for k in G.nodes:
         deg[k] = sum([n.get((k, j), 0) for j in G.nodes])
     core = [k for k in G if NodeLevel[k] == l_max]
@@ -133,14 +134,33 @@ def build_tree(G, L, NodeLevel, l_max, n):
     else:
         T.add(max(core, key = lambda x : deg[x]))
     l = l_max
+    unconnected = []
     for l in range(l_max, 0, -1):
+        j = 0
+        while j < len(unconnected):
+            i = max(T, key = lambda x : weight_heuristic(x, j, n))
+            if (i, j) not in G.edges:
+                pass
+            else:
+                T.add(j)
+                E.add((i, j, G[i][j]['weight']))
+                unconnected.remove(j)
+            j += 1
         for k in L[l]:
             if k in T:
                 pass
             else:
                 i = max(T, key = lambda x : weight_heuristic(x, k, n))
-                T.add(k)
-                E.add((i, k, G[i][k]['weight']))
+                if (i, k) not in G.edges:
+                    unconnected.append(k)
+                else:
+                    T.add(k)
+                    E.add((i, k, G[i][k]['weight']))
+                    if nx.is_dominating_set(G, T):
+                        flag = 1
+                        break
+        if flag == 1:
+            break
     MRCT = nx.Graph()
     MRCT.add_weighted_edges_from(list(E))
     return MRCT
