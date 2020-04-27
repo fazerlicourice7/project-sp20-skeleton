@@ -16,8 +16,6 @@ def solve(G):
     Returns:
         solution tree
     """
-    G = read_input_file(path)
-
     T1 = solver.solve(G)
     T2 = solver1.solve(G)
     T3 = solver2.solve(G)
