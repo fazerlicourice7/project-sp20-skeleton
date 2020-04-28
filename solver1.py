@@ -138,7 +138,7 @@ def build_tree(G, L, NodeLevel, l_max, n):
     for l in range(l_max, 0, -1):
         j = 0
         while j < len(unconnected):
-            i = max(T, key = lambda x : weight_heuristic(x, j, n))
+            i = max(T, key = lambda x : weight_heuristic(x, j, n, G))
             if (i, j) not in G.edges:
                 pass
             else:
@@ -150,7 +150,7 @@ def build_tree(G, L, NodeLevel, l_max, n):
             if k in T:
                 pass
             else:
-                i = max(T, key = lambda x : weight_heuristic(x, k, n))
+                i = max(T, key = lambda x : weight_heuristic(x, k, n, G))
                 if (i, k) not in G.edges:
                     unconnected.append(k)
                 else:
@@ -165,7 +165,7 @@ def build_tree(G, L, NodeLevel, l_max, n):
     MRCT.add_weighted_edges_from(list(E))
     return MRCT
 
-def weight_heuristic(u, v, n):
+def weight_heuristic(u, v, n, G):
     if (u, v) not in G.edges:
         return 0
     return n[(u, v)] / G[u][v]['weight']
