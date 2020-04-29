@@ -22,7 +22,11 @@ def solve(G):
 
     if is_valid_network(G, T1) != True: 
     	return min([T2, T3], key = lambda x: average_pairwise_distance(x))
-    else: 
+    elif is_valid_network(G, T2) != True: 
+        return min([T1, T3], key = lambda x: average_pairwise_distance(x))
+    elif is_valid_network(G, T3) != True: 
+        return min([T1, T2], key = lambda x: average_pairwise_distance(x))
+    else:
     	return min([T1, T2, T3], key = lambda x: average_pairwise_distance(x))
 
 
