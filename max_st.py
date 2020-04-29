@@ -7,7 +7,7 @@ if __name__ == "__main__":
     output_dir = "output"
     input_dir = "inputs"
     for input_path in os.listdir(input_dir):
-        graph_name = input_path.split(".")[0]
+    	graph_name = input_path.split(".")[0]
 		out = input_path.replace('inputs', 'out').replace('.in', '.out') 
 		G = read_input_file("inputs/" + input_path)
 		T = solver_hl.solve(G)
