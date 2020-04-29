@@ -27,7 +27,9 @@ def MST_pruned(G):
     """
 	T = nx.minimum_spanning_tree(G)
 	leaves = [node for node in list(T.nodes) if T.degree[node] == 1]
-	T.remove_nodes_from(leaves)
+
+    if len(leaves) != len(T.nodes): 
+	   T.remove_nodes_from(leaves)
 	return T  
 
 
