@@ -2,7 +2,6 @@ import re
 import os
 
 import networkx as nx
-
 import utils
 
 
@@ -111,3 +110,9 @@ def write_output_file(T, path):
         lines = nx.generate_edgelist(T, data=False)
         fo.writelines("\n".join(lines))
         fo.close()
+
+
+if __name__ == "__main__":
+    G = read_input_file('inputs/small-300.in')
+    output = read_output_file('out/small-300.out', G)
+    print(utils.average_pairwise_distance(output))
