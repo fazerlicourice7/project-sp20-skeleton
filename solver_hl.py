@@ -16,14 +16,14 @@ def solve(G):
     Returns:
         solution tree
     """
-    T1 = solver.solve(G)
+    # T1 = solver.solve(G)
     T2 = solver1.solve(G)
     T3 = solver2.solve(G)
 
-    if is_valid_network(G, T1) != True: 
-    	return min([T2, T3], key = lambda x: average_pairwise_distance(x))
-    else: 
-    	return min([T1, T2, T3], key = lambda x: average_pairwise_distance(x))
+    # if is_valid_network(G, T1) != True: 
+    # 	return min([T2, T3], key = lambda x: average_pairwise_distance(x))
+    # else: 
+    return min([T2, T3], key = lambda x: average_pairwise_distance(x))
 
 
 if __name__ == '__main__':

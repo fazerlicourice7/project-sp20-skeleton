@@ -113,6 +113,6 @@ def write_output_file(T, path):
 
 
 if __name__ == "__main__":
-    G = read_input_file('inputs/large-100.in')
-    output = read_output_file('large-100.out', G)
+    G = read_input_file('inputs/small-300.in')
+    output = read_output_file('out/small-300.out', G)
     print(utils.average_pairwise_distance(output))
