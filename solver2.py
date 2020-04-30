@@ -18,18 +18,18 @@ def solve(G):
     return T
 
 def MST_pruned(G):
-	"""
- 	rgs:
+    """
+    Args:
         G: networkx.Graph
 
     Returns:
-         A networkx.Graph
+        A networkx.Graph
     """
-	T = nx.minimum_spanning_tree(G)
-	leaves = [node for node in list(T.nodes) if T.degree[node] == 1]
-	T.remove_nodes_from(leaves)
-	return T  
-
+    T = nx.minimum_spanning_tree(G)
+    leaves = [node for node in T.nodes if T.degree[node] == 1]
+    if len(leaves) != len(T.nodes):
+        T.remove_nodes_from(leaves)
+    return T
 
 if __name__ == '__main__':
     assert len(sys.argv) == 2
