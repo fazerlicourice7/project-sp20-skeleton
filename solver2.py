@@ -38,4 +38,4 @@ if __name__ == '__main__':
     T = solve(G)
     assert is_valid_network(G, T)
     print("Average  pairwise distance: {}".format(average_pairwise_distance(T)))
-    write_output_file(T, 'out/test.out')
+    write_output_file(T, 'test.out')
