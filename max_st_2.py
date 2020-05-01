@@ -13,6 +13,7 @@ if __name__ == "__main__":
         for i in range(50):
             files.append(f.readline().strip())
     for input_path in os.listdir(input_dir):
+        graph_name = input_path.split(".")[0]
         if input_path in files:
                 #print("input path: {}".format(input_path))
                 #print("graph name: {}".format(graph_name))
